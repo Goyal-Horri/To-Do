@@ -53,6 +53,51 @@ document.addEventListener('DOMContentLoaded',async()=>{
         document.getElementById("motivation").style.display="none";
         document.getElementById("todo").style.display="block";
        }, 6000);
+
+    form.addEventListener('submit',e=>{
+        e.preventDefault();//To prevent from doing default work
+        const itemName=inputItem.value.trim();
+        inputItem.value="";
+        if(itemName.length==0){
+            alertMessage("Please Enter Something", "alert-danger");
+        }
+        else{
+            if(index!=-1){
+                //Update
+                updateItem(index, itemName);
+                index=-1;
+                alertMessage("Item has been edited succesfully", "alert-success");
+            }
+            else{
+                const itemObj={
+                    name:itemName,
+                    isDone: false,
+                    addedAt: new Date().getTime(),
+                };
+                todoItems.push(itemObj);
+                alertMessage("New item has been added succesfully", "alert-success");
+            }
+            setLocalStorage(todoItems);
+            getList(todoItems);
+        }
+    });
+
+    //Filter tabs
+    filters.forEach(tab=>{
+        tab.addEventListener('click', function(e){
+            e.preventDefault();
+            const tabType=this.getAttribute("data-type");
+            document.querySelectorAll('.nav-link').forEach(nav=>{
+                nav.classList.remove("active");
+            })
+            this.firstElementChild.classList.add("active");
+            getItemsFilter(tabType);
+            tabValue=tabType;
+        })
+    })
+
+    //At first, load items from local Storage
+    getLocalStorage();
 });
 
 const alertMessage=function(message, className){
@@ -128,13 +173,12 @@ const getList=function(todoItems){
 //get localStorage
 const getLocalStorage=function(){
     const todoStorage=localStorage.getItem("todoItems");
-    if(todoStorage==="undefined" || todoStorage==="null"){
+    if(todoStorage===undefined || todoStorage===null){
         todoItems=[];
     }
     else{
         todoItems=JSON.parse(todoStorage);
     }
-    // console.log(todoItems);
     getList(todoItems);
 }
 
@@ -166,50 +210,7 @@ const updateItem=function(index, value){
     todoItems.splice(index, 1, newItem);
 }
 
-document.addEventListener('DOMContentLoaded', ()=>{
-    form.addEventListener('submit',e=>{
-        e.preventDefault();//To prevent from doing default work
-        const itemName=inputItem.value.trim();
-        inputItem.value="";
-        if(itemName.length==0){
-            alertMessage("Please Enter Something", "alert-danger");
-        }
-        else{
-            if(index!=-1){
-                //Update
-                updateItem(index, itemName);
-                index=-1;
-                alertMessage("Item has been edited succesfully", "alert-success");
-            }
-            else{
-                const itemObj={
-                    name:itemName,
-                    isDone: false,
-                    addedAt: new Date().getTime(),
-                };
-                todoItems.push(itemObj);
-                alertMessage("New item has been added succesfully", "alert-success");
-            }
-            setLocalStorage(todoItems);
-            getList(todoItems);
-        }
-    });
-
-    //Filter tabs
-    filters.forEach(tab=>{
-        tab.addEventListener('click', function(e){
-            e.preventDefault();
-            const tabType=this.getAttribute("data-type");
-            document.querySelectorAll('.nav-link').forEach(nav=>{
-                nav.classList.remove("active");
-            })
-            this.firstElementChild.classList.add("active");
-            getItemsFilter(tabType);
-            tabValue=tabType;
-        })
-    })
-
-    //At first, load items from local Storage
-    getLocalStorage();
-});
+// document.addEventListener('DOMContentLoaded', ()=>{
+    
+// });
 
