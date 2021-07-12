@@ -21,7 +21,7 @@ const getLoader=()=>{
 
 //Function return quote objects(Fetch API)
 const getQuote=async()=>{
-    const response = await fetch("https://type.fit/api/quotes");
+    const response = await fetch("api.json");
     if(response.status!=200){
         throw new Error(`Something went wrong, status code: ${response.status}`);
     }
